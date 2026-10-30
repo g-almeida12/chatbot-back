@@ -4,14 +4,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_NOT_FOUND_RESPONSE } from './rag.constants';
 import { RagService } from './rag.service';
 
-vi.mock('openai', () => {
+const { generateContentMock } = vi.hoisted(() => ({
+  generateContentMock: vi.fn(),
+}));
+
+vi.mock('@google/genai', () => {
   return {
-    default: class {
-      embeddings = {
-        create: vi.fn().mockResolvedValue({
-          data: [{ embedding: [0.1, 0.2, 0.3] }],
-        }),
-      };
+    GoogleGenAI: class {
+      models = { generateContent: generateContentMock };
     },
   };
 });
@@ -36,7 +36,7 @@ describe('RagService', () => {
       get: vi.fn((key: string) => {
         if (key === 'PINECONE_API_KEY') return 'test-pinecone-key';
         if (key === 'PINECONE_INDEX_NAME') return 'test-index';
-        if (key === 'OPENAI_API_KEY') return 'test-openai-key';
+        if (key === 'GEMINI_API_KEY') return 'test-gemini-key';
         return null;
       }),
     };
@@ -90,10 +90,13 @@ describe('RagService', () => {
         documents: mockDocuments,
       });
 
+      generateContentMock.mockResolvedValue({ text: 'Resposta mockada' });
+
       const result = await service.handleQuery('Pergunta válida');
 
+      expect(generateContentMock).toHaveBeenCalledTimes(1);
       expect(result).toEqual({
-        answer: 'Conteúdo relevante encontrado com sucesso',
+        answer: 'Resposta mockada',
         sources: mockDocuments,
       });
     });
