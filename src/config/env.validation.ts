@@ -25,8 +25,15 @@ export function validateEnv(config: Record<string, unknown>): Record<string, unk
     }
   }
 
+  // Validação obrigatória das chaves do Pinecone e GEMINI (RAG)
+  for (const key of ['PINECONE_API_KEY', 'PINECONE_INDEX_NAME', 'GEMINI_API_KEY']) {
+    if (!config[key]) {
+      errors.push(`${key} é obrigatório.`);
+    }
+  }
+
   if (errors.length > 0) {
-    throw new Error(`Configuração de ambiente inválida:\n- ${errors.join('\n- ')}`);
+    throw new Error(`Configuração de ambiente inválida:\n${errors.join('\n')}`);
   }
 
   return config;

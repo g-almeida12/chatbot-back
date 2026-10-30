@@ -9,6 +9,7 @@ import keycloakConfig from './config/keycloak.config';
 import swaggerConfig from './config/swagger.config';
 import { PrismaModule } from './database/prisma.module';
 import { HealthModule } from './modules/health/health.module';
+import { RagModule } from './modules/rag/rag.module';
 import { TaskModule } from './modules/task/task.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { TaskModule } from './modules/task/task.module';
     AuthModule,
     HealthModule,
     TaskModule,
+    RagModule,
   ],
   providers: [{ provide: APP_PIPE, useClass: ZodValidationPipe }],
 })
