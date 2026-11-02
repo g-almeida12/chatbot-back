@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { RagService } from '@/modules/rag/rag.service';
+import type { SourceDocument } from '@/modules/rag/rag.type';
+import { CONTACTS, FALLBACK_LINKS } from './chat.constants';
 import { ChatResponse } from './chat.type';
 
 const UNKNOWN_SIGNAL = 'NAO_SEI';
@@ -14,9 +17,6 @@ Nunca invente informações.`;
 const UNKNOWN_MESSAGE =
   'Desculpe, não encontrei essa informação. Você pode consultar os links abaixo ou entrar em contato conosco.';
 
-const TEMPORARY_CONTEXT =
-  'A secretaria funciona de segunda a sexta, das 8h às 18h. O telefone é (00) 00000-0000';
-
 interface OpenRouterCompletion {
   choices?: { message?: { content?: string } }[];
 }
@@ -25,10 +25,19 @@ interface OpenRouterCompletion {
 export class ChatService {
   private readonly logger = new Logger(ChatService.name);
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly ragService: RagService,
+  ) {}
 
   async ask(message: string): Promise<ChatResponse> {
-    const answer = await this.callModel(message, TEMPORARY_CONTEXT);
+    const documents = await this.findDocuments(message);
+
+    if (documents.length === 0) {
+      return this.defaultAnswer();
+    }
+
+    const answer = await this.callModel(message, this.buildContext(documents));
 
     if (!answer || answer.toUpperCase().includes(UNKNOWN_SIGNAL)) {
       return this.defaultAnswer();
@@ -41,9 +50,31 @@ export class ChatService {
     return {
       answer: UNKNOWN_MESSAGE,
       found: false,
-      links: [],
-      contacts: {},
+      links: [...FALLBACK_LINKS],
+      contacts: { ...CONTACTS },
     };
+  }
+
+  private async findDocuments(message: string): Promise<SourceDocument[]> {
+    try {
+      const result = await this.ragService.searchRelevantDocuments(message);
+
+      if (!result.hasRelevantContent) {
+        return [];
+      }
+
+      return result.documents.filter((doc) => doc.content.trim().length > 0);
+    } catch (error) {
+      const reason = error instanceof Error ? error.message : 'erro desconhecido';
+      this.logger.error(`Erro na busca: ${reason}`);
+      return [];
+    }
+  }
+
+  private buildContext(documents: SourceDocument[]): string {
+    return documents
+      .map((doc, index) => `[${index + 1}]${doc.title ? ` (${doc.title})` : ''} ${doc.content}`)
+      .join('\n\n');
   }
 
   private async callModel(message: string, context: string): Promise<string | null> {

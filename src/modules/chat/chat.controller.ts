@@ -15,7 +15,7 @@ export class ChatController {
   @ApiOperation({ summary: 'Enviar uma pergunta ao chatbot' })
   @ApiResponse({ status: 200, description: 'Resposta do chatbot' })
   @ApiResponse({ status: 400, description: 'Pedido inválido' })
-  ask(@Body() ChatRequestDto: ChatRequestDto): Promise<ChatResponse> {
-    return this.chatService.ask(ChatRequestDto.message);
+  ask(@Body() chatRequestDto: ChatRequestDto): Promise<ChatResponse> {
+    return this.chatService.ask(chatRequestDto.message);
   }
 }
