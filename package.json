@@ -23,6 +23,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@google/genai": "^2.31.0",
     "@nestjs/common": "^11.1.24",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.1.24",
@@ -30,6 +31,7 @@
     "@nestjs/swagger": "^11.4.4",
     "@nestjs/terminus": "^11.1.1",
     "@prisma/client": "^5.19.1",
+    "@xenova/transformers": "^2.17.2",
     "class-transformer": "^0.5.1",
     "jose": "^6.2.3",
     "nestjs-zod": "^5.5.0",
