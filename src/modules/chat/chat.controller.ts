@@ -8,14 +8,14 @@ import { ChatRequestDto } from './dto/chat-request.dto';
 @ApiBearerAuth()
 @Controller({ path: 'chat', version: '1' })
 export class ChatController {
-    constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService) {}
 
-    @Post()
-    @HttpCode(HttpStatus.OK)
-    @ApiOperation({ summary: 'Enviar uma pergunta ao chatbot' })
-    @ApiResponse({ status: 200, description: 'Resposta do chatbot' })
-    @ApiResponse({ status: 400, description: 'Pedido inválido' })
-    ask (@Body() ChatRequestDto: ChatRequestDto): Promise<ChatResponse> {
-        return this.chatService.ask(ChatRequestDto.message);
-    }
+  @Post()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Enviar uma pergunta ao chatbot' })
+  @ApiResponse({ status: 200, description: 'Resposta do chatbot' })
+  @ApiResponse({ status: 400, description: 'Pedido inválido' })
+  ask(@Body() ChatRequestDto: ChatRequestDto): Promise<ChatResponse> {
+    return this.chatService.ask(ChatRequestDto.message);
+  }
 }

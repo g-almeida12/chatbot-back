@@ -9,9 +9,9 @@ import keycloakConfig from './config/keycloak.config';
 import openrouterConfig from './config/openrouter.config';
 import swaggerConfig from './config/swagger.config';
 import { PrismaModule } from './database/prisma.module';
+import { ChatModule } from './modules/chat/chat.module';
 import { HealthModule } from './modules/health/health.module';
 import { TaskModule } from './modules/task/task.module';
-import { ChatModule } from './modules/chat/chat.module';
 
 @Module({
   imports: [
