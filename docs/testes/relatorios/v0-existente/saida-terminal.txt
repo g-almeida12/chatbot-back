@@ -1,0 +1,59 @@
+
+ RUN  v4.1.8 C:/Users/Fabrício/Documents/GitHub/chatbot-back
+      Coverage enabled with v8
+
+[Nest] 18532  - 14/11/2026, 11:56:05   ERROR [HttpExceptionFilter] undefined /api/v1/tasks -> 500 INTERNAL_ERROR
+Error: boom
+    at C:/Users/Fabrício/Documents/GitHub/chatbot-back/src/common/filters/http-exception.filter.spec.ts:82:18
+    at file:///C:/Users/Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@vitest/runner/dist/chunk-artifact.js:302:11
+    at file:///C:/Users/Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@vitest/runner/dist/chunk-artifact.js:1903:26
+    at file:///C:/Users/Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@vitest/runner/dist/chunk-artifact.js:2326:20
+    at new Promise (<anonymous>)
+    at runWithCancel (file:///C:/Users/Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@vitest/runner/dist/chunk-artifact.js:2323:10)
+    at file:///C:/Users/Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@vitest/runner/dist/chunk-artifact.js:2305:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@vitest/runner/dist/chunk-artifact.js:2272:10)
+    at file:///C:/Users/Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@vitest/runner/dist/chunk-artifact.js:2955:64
+ ✓ src/common/filters/http-exception.filter.spec.ts (4 tests) 45ms
+ ✓ src/modules/task/task.service.spec.ts (8 tests) 62ms
+ ❯ src/modules/rag/rag.service.spec.ts (3 tests | 1 failed) 503ms
+     ✓ deve ser definido 47ms
+       ✓ deve retornar a resposta padrão quando não houver conteúdo relevante 7ms
+       × deve retornar os documentos quando encontrar conteúdo relevante 443ms
+ ✓ src/modules/rag/rag.controller.spec.ts (3 tests) 40ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/modules/rag/rag.service.spec.ts > RagService > handleQuery > deve retornar os documentos quando encontrar conteúdo relevante
+ApiError: {"error":{"code":400,"message":"API key not valid. Please pass a valid API key.","status":"INVALID_ARGUMENT","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"API_KEY_INVALID","domain":"googleapis.com","metadata":{"service":"generativelanguage.googleapis.com"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"API key not valid. Please pass a valid API key."}]}}
+ ❯ throwErrorIfNotOK ../../../../Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@google/genai/dist/node/index.mjs:14144:30
+ ❯ ../../../../Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@google/genai/dist/node/index.mjs:13799:13
+ ❯ Models.generateContentWithContinuation ../../../../Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@google/genai/dist/node/index.mjs:16215:30
+ ❯ Models.generateContent ../../../../Fabr%C3%ADcio/Documents/GitHub/chatbot-back/node_modules/@google/genai/dist/node/index.mjs:15879:24
+ ❯ RagService.handleQuery src/modules/rag/rag.service.ts:113:24
+    111|     const prompt = `Responda à pergunta do utilizador com base apenas …
+    112|
+    113|     const completion = await this.ai.models.generateContent({
+       |                        ^
+    114|       model: 'gemini-3.8-flash',
+    115|       contents: prompt,
+ ❯ src/modules/rag/rag.service.spec.ts:93:22
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 17 passed (18)
+   Start at  11:56:02
+   Duration  4.75s (transform 502ms, setup 0ms, import 11.97s, tests 649ms, environment 1ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |      44 |    20.68 |   45.45 |   43.75 |                   
+ rag.constants.ts  |     100 |      100 |     100 |     100 |                   
+ rag.controller.ts |     100 |      100 |     100 |     100 |                   
+ rag.service.ts    |   34.88 |    20.68 |   33.33 |   34.14 | 29-97,118         
+ rag.type.ts       |       0 |        0 |       0 |       0 |                   
+-------------------|---------|----------|---------|---------|-------------------
