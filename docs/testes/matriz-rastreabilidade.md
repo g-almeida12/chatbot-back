@@ -52,15 +52,15 @@ O projeto manual (US-01 a US-03) foi commitado antes de qualquer geração por L
 | US-03 CA5 | metadata | só `content` | CT-03-06: `content` = `content` | Sim | Sim |
 | US-03 CA5 | metadata | nenhum dos dois | CT-03-07: `content` = "" | Sim | Sim |
 | US-04 CA1 | PINECONE_API_KEY | ausente (undefined) | CT-04-01: criar o service sem a chave → lança erro | Não | Sim, mas **falha** (defeito: fallback `dummy-key`) |
-| US-04 CA1 | PINECONE_API_KEY | vazia (limite) | CT-04-02: chave "" → lança erro | Não | Sim, mas **falha** |
-| US-04 CA1 | GEMINI_API_KEY | ausente (undefined) | CT-04-03: criar o service sem a chave → lança erro | Não | Sim, mas **falha** (a v2 testa também a chave vazia) |
-| US-04 CA2 | PINECONE_INDEX_NAME | ausente (undefined) | CT-04-04: `searchRelevantDocuments` rejeita; Pinecone não consultado | Não | Sim, mas **falha** (a v2 testa também o nome vazio) |
-| US-04 CA1, CA2 | configuração | completa (válida) | CT-04-05: com as três configuradas, o service é criado sem erro | Sim (implícito: todos os testes da v1 usam a configuração completa) | Sim |
+| US-04 CA1 | PINECONE_API_KEY | ausente (undefined) | CT-04-01: criar o service sem a chave → lança erro | Não | Sim, mas **falha** (divergência com o fallback do service) |
+| US-04 CA1 | PINECONE_API_KEY | vazia (limite) | CT-04-02: chave "" → lança erro | Não | Sim, mas **falha** (divergência com o fallback do service) |
+| US-04 CA1 | GEMINI_API_KEY | ausente (undefined) | CT-04-03: criar o service sem a chave → lança erro | Não | Sim, mas **falha** (divergência com o fallback do service; a v2 testa também a chave vazia) |
+| US-04 CA2 | PINECONE_INDEX_NAME | ausente (undefined) | CT-04-04: `searchRelevantDocuments` rejeita; Pinecone não consultado | Não | Sim, mas **falha** (divergência com o fallback do service; a v2 testa também o nome vazio) |
 
 ## Resumo
 
 - User stories: 4. Critérios de aceitação: 13. Casos de teste esperados: 25.
-- Decisões do projeto manual (sem especificação do grupo): CT-01-06 recusa pergunta só com espaços; CT-03-03 propaga erro quando o Gemini devolve texto vazio; US-04 trata configuração ausente como erro (coerente com o `env.validation.ts`). Todas divergem do código atual e são defeitos em relação a esses requisitos.
+- Decisões do projeto manual (sem especificação do grupo): CT-01-06 recusa pergunta só com espaços; CT-03-03 propaga erro quando o Gemini devolve texto vazio. As duas são defeitos em relação ao requisito. A US-04 (configuração ausente é erro) diverge de um fallback do service, e o `env.validation.ts` já exige as três variáveis na inicialização; por isso é tratada como divergência de critério e dívida técnica, e não como defeito.
 - Linha de base (suíte já existente): 18 testes, 17 passando e 1 falhando; `rag.service.ts` com 34,14% de linhas e 20,68% de branches.
 - v1: 73 testes, 64 passando e 9 falhando; requisitos 11/11 (matriz original) ou 11/13 (final); casos 20/20 (original) ou 21/25 (final); `rag.service.ts` com 95,12% de linhas e 82,75% de branches.
 - v2: 78 testes, 64 passando e 14 falhando; requisitos 13/13; casos 25/25; `rag.service.ts` com 95,12% de linhas e 93,10% de branches.

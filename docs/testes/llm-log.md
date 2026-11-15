@@ -88,7 +88,7 @@ US-03: Responder com base nas fontes
 
 - **Testes:** 78 gerados, 64 passando, 14 falhando, 0 não compilam (service 49, DTO 25, controller 4). O DTO e o controller da v2 são cópias da v1 sem alteração.
 - **Cobertura de `rag.service.ts`:** 95,12% de linhas e 93,10% de branches (27 de 29), com 14 testes falhando. Linhas não cobertas: 30-31 (carga do modelo de embedding). O branch restante é o de `@Injectable()`.
-- **Falhas (14):** 5 de US-01 CA3, 3 de US-03 CA3 e 6 de US-04. Todas por defeito do sistema em relação ao requisito. Defeitos distintos: 3 (falta de `trim()`, fallback de resposta vazia do Gemini e fallback silencioso de configuração).
+- **Falhas (14):** 5 de US-01 CA3 e 3 de US-03 CA3, por defeito do sistema (2 defeitos distintos: falta de `trim()` e fallback de resposta vazia do Gemini); e 6 de US-04, por divergência entre o critério da equipe e o fallback `dummy-key` do service. O `env.validation.ts` já exige as três variáveis na inicialização, então essa última não é contada como defeito.
 - **Aplicação das mudanças:** as mudanças da LLM foram aplicadas ao spec da v1 de forma mecânica, por substituição de intervalos de linhas conferidos, sem edição manual do conteúdo. A v1 não foi alterada.
 - **Problemas da resposta da LLM que ficaram como entregues:** (1) G4(b): `['AAA'].join('\n---\n')` equivale a `'AAA'`, então o teste não verifica separador; (2) G4(a): o caso "text não existe" do novo `it.each` duplica o teste original `usa metadata.content quando text não existe`, e os dois continuam na suíte.
 - **Ajustes manuais na v2:** nenhum.
