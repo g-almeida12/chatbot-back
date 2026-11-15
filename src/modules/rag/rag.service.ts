@@ -3,9 +3,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pinecone } from '@pinecone-database/pinecone';
 import {
+  CONTEXT_SEPARATOR,
   DEFAULT_NOT_FOUND_RESPONSE,
+  DEV_PLACEHOLDER_API_KEY,
   EMBEDDING_DIM,
   EMBEDDING_MODEL,
+  EMBEDDING_OPTIONS,
+  EMBEDDING_QUERY_PREFIX,
+  GEMINI_MODEL,
+  GENERATION_FALLBACK_RESPONSE,
+  PINECONE_TOP_K,
   RELEVANCE_SCORE_THRESHOLD,
 } from './rag.constants';
 import type { RagResponse, SourceDocument } from './rag.type';
@@ -24,10 +31,10 @@ export class RagService {
   private extractor: any;
 
   constructor(private readonly configService: ConfigService) {
-    const pineconeApiKey = this.configService.get<string>('PINECONE_API_KEY') || 'dummy-key';
+    const pineconeApiKey = this.configService.get<string>('PINECONE_API_KEY') || DEV_PLACEHOLDER_API_KEY;
     this.pineconeClient = new Pinecone({ apiKey: pineconeApiKey });
 
-    const geminiApiKey = this.configService.get<string>('GEMINI_API_KEY') || 'dummy-key';
+    const geminiApiKey = this.configService.get<string>('GEMINI_API_KEY') || DEV_PLACEHOLDER_API_KEY;
     this.ai = new GoogleGenAI({ apiKey: geminiApiKey });
   }
 
@@ -41,10 +48,7 @@ export class RagService {
 
   private async generateEmbedding(text: string): Promise<number[]> {
     const extractor = await this.getExtractor();
-    const output = await extractor(`query: ${text}`, {
-      pooling: 'mean',
-      normalize: true,
-    });
+    const output = await extractor(`${EMBEDDING_QUERY_PREFIX}${text}`, EMBEDDING_OPTIONS);
 
     const values = Array.from(output.data as Float32Array);
     if (values.length !== EMBEDDING_DIM) {
@@ -78,7 +82,7 @@ export class RagService {
 
       const queryResponse = await index.query({
         vector: queryVector,
-        topK: 5,
+        topK: PINECONE_TOP_K,
         includeMetadata: true,
       });
 
@@ -119,16 +123,16 @@ export class RagService {
       };
     }
 
-    const context = searchResult.documents.map((doc) => doc.content).join('\n---\n');
+    const context = searchResult.documents.map((doc) => doc.content).join(CONTEXT_SEPARATOR);
     const prompt = `Responda à pergunta do utilizador com base apenas no contexto fornecido.\n\nContexto:\n${context}\n\nPergunta: ${question}`;
 
     const completion = await this.ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: GEMINI_MODEL,
       contents: prompt,
     });
 
     return {
-      answer: completion.text || 'Não foi possível gerar uma resposta.',
+      answer: completion.text || GENERATION_FALLBACK_RESPONSE,
       sources: searchResult.documents,
     };
   }
