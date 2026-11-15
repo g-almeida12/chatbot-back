@@ -10,6 +10,12 @@ import {
 } from './rag.constants';
 import type { RagResponse, SourceDocument } from './rag.type';
 
+type VectorMatch = {
+  id: string;
+  score?: number;
+  metadata?: Record<string, unknown>;
+};
+
 @Injectable()
 export class RagService {
   private readonly logger = new Logger(RagService.name);
@@ -47,6 +53,19 @@ export class RagService {
     return values;
   }
 
+  private filterRelevantMatches(matches: VectorMatch[]): VectorMatch[] {
+    return matches.filter((match) => (match.score ?? 0) >= RELEVANCE_SCORE_THRESHOLD);
+  }
+
+  private toSourceDocument(match: VectorMatch): SourceDocument {
+    return {
+      id: match.id,
+      content: (match.metadata?.text as string) || (match.metadata?.content as string) || '',
+      title: (match.metadata?.title as string) || undefined,
+      score: match.score,
+    };
+  }
+
   async searchRelevantDocuments(question: string): Promise<{
     hasRelevantContent: boolean;
     documents: SourceDocument[];
@@ -70,9 +89,7 @@ export class RagService {
         `Scores: [${matches.map((m) => (m.score ?? 0).toFixed(3)).join(', ')}] | limiar: ${RELEVANCE_SCORE_THRESHOLD} | pergunta: "${question}"`,
       );
 
-      const relevantMatches = matches.filter(
-        (match) => (match.score ?? 0) >= RELEVANCE_SCORE_THRESHOLD,
-      );
+      const relevantMatches = this.filterRelevantMatches(matches);
 
       if (relevantMatches.length === 0) {
         return {
@@ -81,12 +98,7 @@ export class RagService {
         };
       }
 
-      const documents: SourceDocument[] = relevantMatches.map((match) => ({
-        id: match.id,
-        content: (match.metadata?.text as string) || (match.metadata?.content as string) || '',
-        title: (match.metadata?.title as string) || undefined,
-        score: match.score,
-      }));
+      const documents = relevantMatches.map((match) => this.toSourceDocument(match));
 
       return {
         hasRelevantContent: true,
