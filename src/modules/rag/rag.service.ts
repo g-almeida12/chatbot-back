@@ -31,11 +31,15 @@ export class RagService {
   private extractor: any;
 
   constructor(private readonly configService: ConfigService) {
-    const pineconeApiKey = this.configService.get<string>('PINECONE_API_KEY') || DEV_PLACEHOLDER_API_KEY;
+    const pineconeApiKey = this.getConfig('PINECONE_API_KEY', DEV_PLACEHOLDER_API_KEY);
     this.pineconeClient = new Pinecone({ apiKey: pineconeApiKey });
 
-    const geminiApiKey = this.configService.get<string>('GEMINI_API_KEY') || DEV_PLACEHOLDER_API_KEY;
+    const geminiApiKey = this.getConfig('GEMINI_API_KEY', DEV_PLACEHOLDER_API_KEY);
     this.ai = new GoogleGenAI({ apiKey: geminiApiKey });
+  }
+
+  private getConfig(key: string, fallback: string): string {
+    return this.configService.get<string>(key) || fallback;
   }
 
   private async getExtractor() {
@@ -75,7 +79,7 @@ export class RagService {
     documents: SourceDocument[];
   }> {
     try {
-      const indexName = this.configService.get<string>('PINECONE_INDEX_NAME') || '';
+      const indexName = this.getConfig('PINECONE_INDEX_NAME', '');
       const index = this.pineconeClient.index(indexName);
 
       const queryVector = await this.generateEmbedding(question);
