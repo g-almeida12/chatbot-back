@@ -5,7 +5,7 @@
 | Tipo | Ferramenta | Configuração |
 |---|---|---|
 | LLM | Claude Sonnet 5.5, esforço médio | Conversa em 15/11/2026, com o contexto da Parte 1 (testes, cobertura e execução do spec original) |
-| Análise estática | Nenhuma executada | ESLint, jscpd e madge não foram usados |
+| Análise estática | Biome (lint do projeto, executado pelo hook de pre-commit) | Regras recomendadas, sobre `rag.service.ts` na refatoração R3: 1 aviso (`lint/suspicious/noExplicitAny`, campo `extractor`) |
 | Manual | Leitura guiada pelas tabelas do roteiro (propriedades de projeto, SOLID e code smells) | Módulo `rag` |
 
 ## Entrada fornecida à LLM
@@ -24,4 +24,4 @@ Foram enviados, sem texto adicional, o `rag.service.ts` e o `rag.service.spec.ts
 
 ## Comparação entre as formas de identificação
 
-(Completar no relatório de refatoração: o que a leitura manual achou que a LLM não achou, e vice-versa. Se uma ferramenta de análise estática for executada, registrar aqui o comando e o resultado.)
+O Biome apontou 1 dos 11 itens (DT-06, o `any` do `extractor`), e só no nível do tipo. Não apontou métodos longos, código duplicado, literais soltos, acoplamento (DIP) nem o spec desatualizado: as regras recomendadas não medem complexidade nem duplicação, e não enxergam responsabilidades misturadas. A LLM apontou os 11 itens, incluindo os de projeto (DIP, SRP, integridade conceitual). O spec desatualizado (DT-08) e o erro do nome do modelo (DT-04) foram confirmados pela execução dos testes.
