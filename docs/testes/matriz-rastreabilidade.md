@@ -21,7 +21,11 @@ O projeto manual (critérios, partições, limites e casos esperados) foi commit
 - CA2: O contexto enviado ao Gemini concatena os conteúdos separados por `\n---\n`, junto com a pergunta.
 - CA3: Dado que o Gemini devolve texto vazio, o sistema lança erro em vez de devolver sucesso com mensagem de fallback.
 - CA4: Dado que a consulta ao Pinecone falha, o erro é propagado e o Gemini não é chamado.
-- CA5: O `content` de cada fonte vem de `metadata.text`; se não existir, de `metadata.content`; se nenhum existir, é string vazia.
+- CA5: O `content` de cada fonte vem de `metadata.text`; se não existir ou for vazio, de `metadata.content`; se nenhum existir, é string vazia.
+
+**US-04: Configuração obrigatória** (adicionada depois da v1, a partir das lacunas de branch)
+- CA1: Dado que `PINECONE_API_KEY` ou `GEMINI_API_KEY` está ausente ou vazia, o `RagService` lança erro ao ser criado, em vez de usar valor padrão.
+- CA2: Dado que `PINECONE_INDEX_NAME` está ausente ou vazio, a busca lança erro e o Pinecone não é consultado com índice vazio.
 
 ## Matriz
 
@@ -47,10 +51,16 @@ O projeto manual (critérios, partições, limites e casos esperados) foi commit
 | US-03 CA5 | metadata | só `text` | CT-03-05: `content` = `text` | Sim (service.spec: usa metadata.text quando existe) | |
 | US-03 CA5 | metadata | só `content` | CT-03-06: `content` = `content` | Sim (service.spec: usa metadata.content quando text não existe) | |
 | US-03 CA5 | metadata | nenhum dos dois | CT-03-07: `content` = "" | Sim (service.spec: devolve string vazia com metadata sem text nem content) | |
+| US-04 CA1 | PINECONE_API_KEY | ausente (undefined) | CT-04-01: criar o service sem a chave → lança erro | Não | |
+| US-04 CA1 | PINECONE_API_KEY | vazia (limite) | CT-04-02: chave "" → lança erro | Não | |
+| US-04 CA1 | GEMINI_API_KEY | ausente (undefined) | CT-04-03: criar o service sem a chave → lança erro | Não | |
+| US-04 CA2 | PINECONE_INDEX_NAME | ausente (undefined) | CT-04-04: `searchRelevantDocuments` rejeita; Pinecone não consultado | Não | |
+| US-04 CA1, CA2 | configuração | completa (válida) | CT-04-05: com as três configuradas, o service é criado sem erro | Sim (implícito: todos os testes da v1 usam a configuração completa) | |
 
 ## Resumo
 
-- User stories: 3. Critérios de aceitação: 11. Casos de teste esperados: 20.
+ User stories: 4 (a US-04 foi adicionada depois da v1). Critérios de aceitação: 13. Casos de teste esperados: 25.
 - Decisões do projeto manual (sem especificação do grupo): CT-01-06 recusa pergunta só com espaços; CT-03-03 propaga erro quando o Gemini devolve texto vazio. Ambos divergem do código atual.
 - Linha de base (suíte já existente no repositório): 18 testes, 17 passando e 1 falhando; `rag.service.ts` com 34,14% de linhas e 20,68% de branches.
 - v1: 73 testes, 64 passando e 9 falhando (2 defeitos reais). Cobertura de requisitos 11/11 e de casos da matriz 20/20. `rag.service.ts` com 95,12% de linhas e 82,75% de branches.
+- Indicadores da v1: medidos sobre a matriz original (3 user stories, 11 critérios, 20 casos). A v2 é medida sobre a matriz completa (4 user stories, 13 critérios, 25 casos).
