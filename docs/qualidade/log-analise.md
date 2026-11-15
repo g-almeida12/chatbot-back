@@ -25,3 +25,32 @@ Foram enviados, sem texto adicional, o `rag.service.ts` e o `rag.service.spec.ts
 ## Comparação entre as formas de identificação
 
 O Biome apontou 1 dos 11 itens (DT-06, o `any` do `extractor`), e só no nível do tipo. Não apontou métodos longos, código duplicado, literais soltos, acoplamento (DIP) nem o spec desatualizado: as regras recomendadas não medem complexidade nem duplicação, e não enxergam responsabilidades misturadas. A LLM apontou os 11 itens, incluindo os de projeto (DIP, SRP, integridade conceitual). O spec desatualizado (DT-08) e o erro do nome do modelo (DT-04) foram confirmados pela execução dos testes.
+
+## Revisão da equipe
+
+- **Revisor:** Fabrício Fernandes
+- **Data:** 15/11/2026
+- **Base conferida:** branch `sprint3-testes`, a partir do commit `04214e9` (`rag.service.ts` e `rag.service.spec.ts` originais)
+- **Como foi feita:** leitura dos arquivos no editor, conferindo cada trecho citado na tabela de dívida técnica
+- **Resultado:** 10 itens confirmados e 1 mantido como hipótese (DT-10). Nenhum item foi descartado.
+
+| ID | Situação | Linhas conferidas | Observação |
+|---|---|---|---|
+| DT-01 |  Confirmado | `rag.service.ts` L20-26 | Os clientes `Pinecone` e `GoogleGenAI` são criados no construtor |
+| DT-02 |  Confirmado | `rag.service.ts` L50-99 | Função de 50 linhas que mistura 7 responsabilidades |
+| DT-03 |  Confirmado | `rag.service.ts` L101-122 (prompt nas L110-111) | Template do prompt e separador ficam dentro de `handleQuery` |
+| DT-04 |  Confirmado | `rag.service.ts` L21, L24, L38-40, L62, L110, L114, L119 | Literais conferidos um a um. O nome do modelo fixo no código causou o erro silencioso visto na execução |
+| DT-05 |  Confirmado | `rag.service.ts` L21, L24, L55 | Mesmo padrão `get(...) \|\| fallback` nos 3 pontos. Em produção os fallbacks são código morto, porque o `env.validation.ts` exige as três variáveis |
+| DT-06 |  Confirmado | `rag.service.ts` L18 e L28-48 | `new Function` e `extractor: any` conferidos. O Biome também aponta o `any` (`noExplicitAny`) |
+| DT-07 |  Confirmado | `rag.type.ts`; `rag.service.ts` L101-122 | `sources` é obrigatório no tipo, e a resposta padrão não o devolve |
+| DT-08 |  Confirmado | `rag.service.spec.ts` (original) L7, L39 e L96 | O spec mocka `openai`, usa `OPENAI_API_KEY` e espera um texto que o service atual não devolve |
+| DT-09 |  Confirmado | `rag.service.ts` L68-71 | O log registra o texto da pergunta do usuário |
+| DT-10 |  Hipótese | `rag.service.ts` L28-34 | Veio da leitura do código e não foi reproduzida com teste de concorrência |
+| DT-11 |  Confirmado | `rag.service.ts` L113-116 | A chamada ao Gemini não tem `try/catch`, timeout nem nova tentativa |
+
+**Itens propostos pela LLM que foram corrigidos ou rejeitados durante a análise**
+
+- Fallback `dummy-key` tratado como defeito na Parte 1: reclassificado como divergência de critério e dívida técnica (DT-05), porque o `env.validation.ts` já exige as três variáveis.
+- "Remover o fallback `dummy-key`" como refatoração: rejeitado, porque muda comportamento.
+
+**Falsos positivos descartados** (detalhes em `divida-tecnica.md`): o `catch` que relança o erro, o `(m.score ?? 0)` repetido, o branch de `@Injectable()` e o `min(1)` do DTO (que é defeito de comportamento da Parte 1, não dívida de projeto).
