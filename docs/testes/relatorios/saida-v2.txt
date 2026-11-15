@@ -1,0 +1,179 @@
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.8 [39m[90mC:/Users/Fabrício/Documents/GitHub/chatbot-back[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [31m❯[39m tests/v2/rag.service.spec.ts [2m([22m[2m49 tests[22m[2m | [22m[31m9 failed[39m[2m)[22m[32m 108[2mms[22m[39m
+         [32m✓[39m mantém match com score exatamente o limiar (limite)[32m 12[2mms[22m[39m
+         [32m✓[39m mantém match com score limiar + epsilon (logo acima do limite)[32m 1[2mms[22m[39m
+         [32m✓[39m mantém match com score score máximo 1.0[32m 1[2mms[22m[39m
+         [32m✓[39m inclui o match relevante em sources da resposta final[32m 1[2mms[22m[39m
+         [32m✓[39m descarta match com limiar - epsilon (logo abaixo do limite)[32m 1[2mms[22m[39m
+         [32m✓[39m descarta match com score 0[32m 1[2mms[22m[39m
+         [32m✓[39m descarta match com score 0.5[32m 1[2mms[22m[39m
+         [32m✓[39m descarta match com score negativo[32m 1[2mms[22m[39m
+         [32m✓[39m descarta match com score undefined (ausente)[32m 1[2mms[22m[39m
+         [32m✓[39m em lista mista mantém apenas os relevantes, preservando a ordem[32m 1[2mms[22m[39m
+         [32m✓[39m responde somente com a resposta padrão quando: matches vazio[32m 2[2mms[22m[39m
+         [32m✓[39m responde somente com a resposta padrão quando: matches undefined[32m 1[2mms[22m[39m
+         [32m✓[39m responde somente com a resposta padrão quando: todos abaixo do limiar[32m 1[2mms[22m[39m
+         [32m✓[39m responde somente com a resposta padrão quando: todos sem score[32m 1[2mms[22m[39m
+         [32m✓[39m devolve answer do Gemini e sources completas[32m 3[2mms[22m[39m
+         [32m✓[39m inclui o title na fonte quando existe em metadata[32m 1[2mms[22m[39m
+         [32m✓[39m funciona com exatamente 1 documento relevante (limite inferior de sources)[32m 1[2mms[22m[39m
+         [32m✓[39m separa os conteúdos de 2+ documentos por "\n---\n"[32m 1[2mms[22m[39m
+         [32m✓[39m com 1 documento (limite) o prompt contém o conteúdo e a pergunta[32m 1[2mms[22m[39m
+         [32m✓[39m inclui a pergunta do usuário no prompt enviado ao Gemini[32m 1[2mms[22m[39m
+         [32m✓[39m não inclui no contexto o conteúdo de documentos descartados pelo limiar[32m 1[2mms[22m[39m
+[31m         [31m×[31m rejeita com Error e sem resposta de sucesso quando completion.text é string vazia[39m[32m 30[2mms[22m[39m
+[31m         [31m×[31m rejeita com Error e sem resposta de sucesso quando completion.text é undefined[39m[32m 2[2mms[22m[39m
+[31m         [31m×[31m rejeita com Error e sem resposta de sucesso quando completion.text é null[39m[32m 2[2mms[22m[39m
+         [32m✓[39m aceita resposta com 1 caractere (limite mínimo válido do texto)[32m 2[2mms[22m[39m
+         [32m✓[39m propaga o mesmo erro lançado pelo Pinecone[32m 3[2mms[22m[39m
+         [32m✓[39m não chama o Gemini quando o Pinecone falha[32m 2[2mms[22m[39m
+         [32m✓[39m propaga falha ao obter o índice do Pinecone e não chama o Gemini[32m 2[2mms[22m[39m
+         [32m✓[39m usa metadata.text quando existe[32m 1[2mms[22m[39m
+         [32m✓[39m prefere metadata.text quando text e content existem[32m 1[2mms[22m[39m
+         [32m✓[39m usa metadata.content quando text não existe[32m 2[2mms[22m[39m
+         [32m✓[39m usa metadata.content quando text não existe[32m 1[2mms[22m[39m
+         [32m✓[39m usa metadata.content quando text é vazio[32m 1[2mms[22m[39m
+         [32m✓[39m devolve string vazia com metadata sem text nem content[32m 1[2mms[22m[39m
+         [32m✓[39m devolve string vazia com metadata vazio[32m 1[2mms[22m[39m
+         [32m✓[39m devolve string vazia com metadata undefined[32m 1[2mms[22m[39m
+         [32m✓[39m devolve string vazia com text e content vazios[32m 1[2mms[22m[39m
+[31m         [31m×[31m lança erro ao criar o service com PINECONE_API_KEY ausente[39m[32m 3[2mms[22m[39m
+[31m         [31m×[31m lança erro ao criar o service com PINECONE_API_KEY vazia[39m[32m 2[2mms[22m[39m
+[31m         [31m×[31m lança erro ao criar o service com GEMINI_API_KEY ausente[39m[32m 1[2mms[22m[39m
+[31m         [31m×[31m lança erro ao criar o service com GEMINI_API_KEY vazia[39m[32m 1[2mms[22m[39m
+         [32m✓[39m cria o service sem erro com as três configurações presentes[32m 1[2mms[22m[39m
+[31m         [31m×[31m lança erro e não consulta o Pinecone quando PINECONE_INDEX_NAME está ausente[39m[32m 1[2mms[22m[39m
+[31m         [31m×[31m lança erro e não consulta o Pinecone quando PINECONE_INDEX_NAME está vazio[39m[32m 1[2mms[22m[39m
+         [32m✓[39m consulta o índice informado quando PINECONE_INDEX_NAME está presente[32m 1[2mms[22m[39m
+       [32m✓[39m consulta o Pinecone com topK 5, includeMetadata e vetor de EMBEDDING_DIM posições[32m 1[2mms[22m[39m
+       [32m✓[39m gera o embedding com prefixo "query: " e pooling/normalize[32m 1[2mms[22m[39m
+       [32m✓[39m rejeita embedding com dimensão EMBEDDING_DIM - 1 e não consulta o Pinecone[32m 3[2mms[22m[39m
+       [32m✓[39m rejeita embedding com dimensão EMBEDDING_DIM + 1 e não consulta o Pinecone[32m 1[2mms[22m[39m
+ [31m❯[39m tests/v2/query-rag.dto.spec.ts [2m([22m[2m25 tests[22m[2m | [22m[31m5 failed[39m[2m)[22m[32m 38[2mms[22m[39m
+       [32m✓[39m aceita texto simples[32m 7[2mms[22m[39m
+       [32m✓[39m aceita texto com acentos e símbolos[32m 1[2mms[22m[39m
+       [32m✓[39m aceita texto muito longo (5000 caracteres)[32m 0[2mms[22m[39m
+       [32m✓[39m aceita texto com espaços nas bordas e conteúdo no meio[32m 0[2mms[22m[39m
+       [32m✓[39m aceita pergunta com exatamente 1 caractere (limite inferior válido)[32m 1[2mms[22m[39m
+       [32m✓[39m preserva o texto da pergunta após a validação[32m 0[2mms[22m[39m
+       [32m✓[39m recusa string vazia (limite: length = 0, imediatamente abaixo do mínimo)[32m 2[2mms[22m[39m
+       [32m✓[39m recusa pergunta ausente: corpo sem o campo question ({})[32m 1[2mms[22m[39m
+       [32m✓[39m recusa pergunta ausente: question undefined[32m 1[2mms[22m[39m
+       [32m✓[39m recusa pergunta ausente: corpo undefined[32m 0[2mms[22m[39m
+       [32m✓[39m recusa pergunta ausente: corpo null[32m 0[2mms[22m[39m
+       [32m✓[39m recusa pergunta ausente: campo desconhecido no lugar de question[32m 0[2mms[22m[39m
+       [32m✓[39m recusa question com tipo inválido: null[32m 0[2mms[22m[39m
+       [32m✓[39m recusa question com tipo inválido: número[32m 0[2mms[22m[39m
+       [32m✓[39m recusa question com tipo inválido: zero[32m 0[2mms[22m[39m
+       [32m✓[39m recusa question com tipo inválido: booleano true[32m 0[2mms[22m[39m
+       [32m✓[39m recusa question com tipo inválido: booleano false[32m 0[2mms[22m[39m
+       [32m✓[39m recusa question com tipo inválido: array de strings[32m 0[2mms[22m[39m
+       [32m✓[39m recusa question com tipo inválido: objeto[32m 0[2mms[22m[39m
+[31m       [31m×[31m recusa 1 espaço (limite: menor string não vazia só com whitespace)[39m[32m 13[2mms[22m[39m
+[31m       [31m×[31m recusa vários espaços[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m recusa tabulação[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m recusa quebras de linha[39m[32m 1[2mms[22m[39m
+[31m       [31m×[31m recusa mistura de whitespace[39m[32m 1[2mms[22m[39m
+       [32m✓[39m aceita pergunta com espaços nas bordas desde que haja conteúdo (fronteira entre CA3 e CA1)[32m 0[2mms[22m[39m
+ [32m✓[39m tests/v2/rag.controller.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 14 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m tests/v2/query-rag.dto.spec.ts[2m > [22mUS-01 - Consultar o chatbot (QueryRagDto)[2m > [22mCA3 - pergunta só com espaços é recusada com 400[2m > [22mrecusa 1 espaço (limite: menor string não vazia só com whitespace)
+[41m[1m FAIL [22m[49m tests/v2/query-rag.dto.spec.ts[2m > [22mUS-01 - Consultar o chatbot (QueryRagDto)[2m > [22mCA3 - pergunta só com espaços é recusada com 400[2m > [22mrecusa vários espaços
+[41m[1m FAIL [22m[49m tests/v2/query-rag.dto.spec.ts[2m > [22mUS-01 - Consultar o chatbot (QueryRagDto)[2m > [22mCA3 - pergunta só com espaços é recusada com 400[2m > [22mrecusa tabulação
+[41m[1m FAIL [22m[49m tests/v2/query-rag.dto.spec.ts[2m > [22mUS-01 - Consultar o chatbot (QueryRagDto)[2m > [22mCA3 - pergunta só com espaços é recusada com 400[2m > [22mrecusa quebras de linha
+[41m[1m FAIL [22m[49m tests/v2/query-rag.dto.spec.ts[2m > [22mUS-01 - Consultar o chatbot (QueryRagDto)[2m > [22mCA3 - pergunta só com espaços é recusada com 400[2m > [22mrecusa mistura de whitespace
+[31m[1mAssertionError[22m: expected true to be false // Object.is equality[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- false[39m
+[31m+ true[39m
+
+[36m [2m❯[22m tests/v2/query-rag.dto.spec.ts:[2m100:62[22m[39m
+    [90m 98|[39m       [90m// Critério: US-01 CA3[39m
+    [90m 99|[39m       // OBS: com o schema atual (z.string().min(1)) este teste FALHA,…
+    [90m100|[39m       expect(QueryRagSchema.safeParse({ question }).success).toBe(fals…
+    [90m   |[39m                                                              [31m^[39m
+    [90m101|[39m       [34mexpect[39m([35mawait[39m [34mvalidationStatus[39m({ question }))[33m.[39m[34mtoBe[39m([34m400[39m)[33m;[39m
+    [90m102|[39m     })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-03 - Responder com base nas fontes[2m > [22mCA3 - Gemini devolve texto vazio: lança erro em vez de fallback[2m > [22mrejeita com Error e sem resposta de sucesso quando completion.text é string vazia
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-03 - Responder com base nas fontes[2m > [22mCA3 - Gemini devolve texto vazio: lança erro em vez de fallback[2m > [22mrejeita com Error e sem resposta de sucesso quando completion.text é undefined
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-03 - Responder com base nas fontes[2m > [22mCA3 - Gemini devolve texto vazio: lança erro em vez de fallback[2m > [22mrejeita com Error e sem resposta de sucesso quando completion.text é null
+[31m[1mAssertionError[22m: expected { ok: true, value: { …(2) } } to match object { ok: false, error: Any<Error> }
+(3 matching properties omitted from actual)[39m
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[2m  {[22m
+[32m-   "error": Any<Error>,[39m
+[32m-   "ok": false,[39m
+[31m+   "ok": true,[39m
+[2m  }[22m
+
+[36m [2m❯[22m tests/v2/rag.service.spec.ts:[2m308:25[22m[39m
+    [90m306|[39m
+    [90m307|[39m         [34mexpect[39m(mocks[33m.[39mgenerateContent)[33m.[39m[34mtoHaveBeenCalledTimes[39m([34m1[39m)[33m;[39m
+    [90m308|[39m         expect(outcome).toMatchObject({ ok: false, error: expect.any(E…
+    [90m   |[39m                         [31m^[39m
+    [90m309|[39m         [34mexpect[39m(outcome)[33m.[39mnot[33m.[39m[34mtoHaveProperty[39m([32m'value.sources'[39m)[33m;[39m
+    [90m310|[39m       })[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-04 - Configuração obrigatória[2m > [22mCA1 - chave de API ausente ou vazia impede a criação do service[2m > [22mlança erro ao criar o service com PINECONE_API_KEY ausente
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-04 - Configuração obrigatória[2m > [22mCA1 - chave de API ausente ou vazia impede a criação do service[2m > [22mlança erro ao criar o service com PINECONE_API_KEY vazia
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-04 - Configuração obrigatória[2m > [22mCA1 - chave de API ausente ou vazia impede a criação do service[2m > [22mlança erro ao criar o service com GEMINI_API_KEY ausente
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-04 - Configuração obrigatória[2m > [22mCA1 - chave de API ausente ou vazia impede a criação do service[2m > [22mlança erro ao criar o service com GEMINI_API_KEY vazia
+[31m[1mAssertionError[22m: expected undefined to be an instance of Error[39m
+[36m [2m❯[22m tests/v2/rag.service.spec.ts:[2m440:23[22m[39m
+    [90m438|[39m         const error = constructionError(makeConfig({ [chave]: valor })…
+    [90m439|[39m
+    [90m440|[39m         [34mexpect[39m(error)[33m.[39m[34mtoBeInstanceOf[39m([33mError[39m)[33m;[39m
+    [90m   |[39m                       [31m^[39m
+    [90m441|[39m       })[33m;[39m
+    [90m442|[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/14]⎯[22m[39m
+
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-04 - Configuração obrigatória[2m > [22mCA2 - nome do índice ausente ou vazio impede a busca[2m > [22mlança erro e não consulta o Pinecone quando PINECONE_INDEX_NAME está ausente
+[41m[1m FAIL [22m[49m tests/v2/rag.service.spec.ts[2m > [22mRagService[2m > [22mUS-04 - Configuração obrigatória[2m > [22mCA2 - nome do índice ausente ou vazio impede a busca[2m > [22mlança erro e não consulta o Pinecone quando PINECONE_INDEX_NAME está vazio
+[31m[1mAssertionError[22m: expected undefined to be an instance of Error[39m
+[36m [2m❯[22m tests/v2/rag.service.spec.ts:[2m470:25[22m[39m
+    [90m468|[39m           )[33m;[39m
+    [90m469|[39m
+    [90m470|[39m           [34mexpect[39m(error)[33m.[39m[34mtoBeInstanceOf[39m([33mError[39m)[33m;[39m
+    [90m   |[39m                         [31m^[39m
+    [90m471|[39m           [34mexpect[39m(mocks[33m.[39mpineconeIndex)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalledWith[39m([32m''[39m)[33m;[39m
+    [90m472|[39m           [34mexpect[39m(mocks[33m.[39mpineconeQuery)[33m.[39mnot[33m.[39m[34mtoHaveBeenCalled[39m()[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/14]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m1 passed[39m[22m[90m (3)[39m
+[2m      Tests [22m [1m[31m14 failed[39m[22m[2m | [22m[1m[32m64 passed[39m[22m[90m (78)[39m
+[2m   Start at [22m 22:50:09
+[2m   Duration [22m 7.47s[2m (transform 727ms, setup 0ms, import 11.94s, tests 163ms, environment 1ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   92.45 |     93.1 |     100 |   92.15 |                   
+ rag               |    92.3 |     93.1 |     100 |      92 |                   
+  rag.constants.ts |     100 |      100 |     100 |     100 |                   
+  ...controller.ts |     100 |      100 |     100 |     100 |                   
+  rag.module.ts    |       0 |      100 |     100 |       0 | 5-10              
+  rag.service.ts   |   95.34 |     93.1 |     100 |   95.12 | 30-31             
+ rag/dto           |     100 |      100 |     100 |     100 |                   
+  query-rag.dto.ts |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
