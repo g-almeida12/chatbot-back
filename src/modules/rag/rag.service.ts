@@ -3,12 +3,25 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Pinecone } from '@pinecone-database/pinecone';
 import {
+  CONTEXT_SEPARATOR,
   DEFAULT_NOT_FOUND_RESPONSE,
+  DEV_PLACEHOLDER_API_KEY,
   EMBEDDING_DIM,
   EMBEDDING_MODEL,
+  EMBEDDING_OPTIONS,
+  EMBEDDING_QUERY_PREFIX,
+  GEMINI_MODEL,
+  GENERATION_FALLBACK_RESPONSE,
+  PINECONE_TOP_K,
   RELEVANCE_SCORE_THRESHOLD,
 } from './rag.constants';
 import type { RagResponse, SourceDocument } from './rag.type';
+
+type VectorMatch = {
+  id: string;
+  score?: number;
+  metadata?: Record<string, unknown>;
+};
 
 @Injectable()
 export class RagService {
@@ -18,11 +31,15 @@ export class RagService {
   private extractor: any;
 
   constructor(private readonly configService: ConfigService) {
-    const pineconeApiKey = this.configService.get<string>('PINECONE_API_KEY') || 'dummy-key';
+    const pineconeApiKey = this.getConfig('PINECONE_API_KEY', DEV_PLACEHOLDER_API_KEY);
     this.pineconeClient = new Pinecone({ apiKey: pineconeApiKey });
 
-    const geminiApiKey = this.configService.get<string>('GEMINI_API_KEY') || 'dummy-key';
+    const geminiApiKey = this.getConfig('GEMINI_API_KEY', DEV_PLACEHOLDER_API_KEY);
     this.ai = new GoogleGenAI({ apiKey: geminiApiKey });
+  }
+
+  private getConfig(key: string, fallback: string): string {
+    return this.configService.get<string>(key) || fallback;
   }
 
   private async getExtractor() {
@@ -35,10 +52,7 @@ export class RagService {
 
   private async generateEmbedding(text: string): Promise<number[]> {
     const extractor = await this.getExtractor();
-    const output = await extractor(`query: ${text}`, {
-      pooling: 'mean',
-      normalize: true,
-    });
+    const output = await extractor(`${EMBEDDING_QUERY_PREFIX}${text}`, EMBEDDING_OPTIONS);
 
     const values = Array.from(output.data as Float32Array);
     if (values.length !== EMBEDDING_DIM) {
@@ -47,19 +61,32 @@ export class RagService {
     return values;
   }
 
+  private filterRelevantMatches(matches: VectorMatch[]): VectorMatch[] {
+    return matches.filter((match) => (match.score ?? 0) >= RELEVANCE_SCORE_THRESHOLD);
+  }
+
+  private toSourceDocument(match: VectorMatch): SourceDocument {
+    return {
+      id: match.id,
+      content: (match.metadata?.text as string) || (match.metadata?.content as string) || '',
+      title: (match.metadata?.title as string) || undefined,
+      score: match.score,
+    };
+  }
+
   async searchRelevantDocuments(question: string): Promise<{
     hasRelevantContent: boolean;
     documents: SourceDocument[];
   }> {
     try {
-      const indexName = this.configService.get<string>('PINECONE_INDEX_NAME') || '';
+      const indexName = this.getConfig('PINECONE_INDEX_NAME', '');
       const index = this.pineconeClient.index(indexName);
 
       const queryVector = await this.generateEmbedding(question);
 
       const queryResponse = await index.query({
         vector: queryVector,
-        topK: 5,
+        topK: PINECONE_TOP_K,
         includeMetadata: true,
       });
 
@@ -70,9 +97,7 @@ export class RagService {
         `Scores: [${matches.map((m) => (m.score ?? 0).toFixed(3)).join(', ')}] | limiar: ${RELEVANCE_SCORE_THRESHOLD} | pergunta: "${question}"`,
       );
 
-      const relevantMatches = matches.filter(
-        (match) => (match.score ?? 0) >= RELEVANCE_SCORE_THRESHOLD,
-      );
+      const relevantMatches = this.filterRelevantMatches(matches);
 
       if (relevantMatches.length === 0) {
         return {
@@ -81,12 +106,7 @@ export class RagService {
         };
       }
 
-      const documents: SourceDocument[] = relevantMatches.map((match) => ({
-        id: match.id,
-        content: (match.metadata?.text as string) || (match.metadata?.content as string) || '',
-        title: (match.metadata?.title as string) || undefined,
-        score: match.score,
-      }));
+      const documents = relevantMatches.map((match) => this.toSourceDocument(match));
 
       return {
         hasRelevantContent: true,
@@ -107,16 +127,16 @@ export class RagService {
       };
     }
 
-    const context = searchResult.documents.map((doc) => doc.content).join('\n---\n');
+    const context = searchResult.documents.map((doc) => doc.content).join(CONTEXT_SEPARATOR);
     const prompt = `Responda à pergunta do utilizador com base apenas no contexto fornecido.\n\nContexto:\n${context}\n\nPergunta: ${question}`;
 
     const completion = await this.ai.models.generateContent({
-      model: 'gemini-3.8-flash',
+      model: GEMINI_MODEL,
       contents: prompt,
     });
 
     return {
-      answer: completion.text || 'Não foi possível gerar uma resposta.',
+      answer: completion.text || GENERATION_FALLBACK_RESPONSE,
       sources: searchResult.documents,
     };
   }

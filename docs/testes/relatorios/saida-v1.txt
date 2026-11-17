@@ -1,0 +1,165 @@
+
+ RUN  v4.1.8 C:/Users/Fabrício/Documents/GitHub/chatbot-back
+      Coverage enabled with v8
+
+ ❯ tests/v1-llm/rag.service.spec.ts (44 tests | 4 failed) 91ms
+         ✓ mantém match com score exatamente o limiar (limite) 12ms
+         ✓ mantém match com score limiar + epsilon (logo acima do limite) 1ms
+         ✓ mantém match com score score máximo 1.0 1ms
+         ✓ inclui o match relevante em sources da resposta final 2ms
+         ✓ descarta match com limiar - epsilon (logo abaixo do limite) 1ms
+         ✓ descarta match com score 0 1ms
+         ✓ descarta match com score 0.5 1ms
+         ✓ descarta match com score negativo 1ms
+         ✓ descarta match com score undefined (ausente) 1ms
+         ✓ em lista mista mantém apenas os relevantes, preservando a ordem 1ms
+         ✓ responde somente com a resposta padrão quando: matches vazio 2ms
+         ✓ responde somente com a resposta padrão quando: matches undefined 1ms
+         ✓ responde somente com a resposta padrão quando: todos abaixo do limiar 1ms
+         ✓ responde somente com a resposta padrão quando: todos sem score 1ms
+       ✓ consulta o Pinecone no índice configurado, com topK 5 e metadata 5ms
+       ✓ gera o embedding da pergunta com o prefixo "query: " (sem rede) 3ms
+       ✓ rejeita embedding com dimensão menor (EMBEDDING_DIM - 1) e não consulta o Pinecone 4ms
+       ✓ rejeita embedding com dimensão maior (EMBEDDING_DIM + 1) e não consulta o Pinecone 1ms
+       ✓ rejeita embedding com dimensão zero e não consulta o Pinecone 1ms
+         ✓ devolve answer do Gemini e sources completas 1ms
+         ✓ inclui o title na fonte quando existe em metadata 1ms
+         ✓ funciona com exatamente 1 documento relevante (limite inferior de sources) 1ms
+         ✓ funciona com 5 documentos relevantes (limite superior: topK) 1ms
+         ✓ separa os conteúdos de 2+ documentos por "\n---\n" 1ms
+         ✓ com 1 documento não adiciona separador (limite) 1ms
+         ✓ inclui a pergunta do usuário no prompt enviado ao Gemini 1ms
+         ✓ não inclui no contexto o conteúdo de documentos descartados pelo limiar 1ms
+         × lança erro quando completion.text é string vazia 20ms
+         × lança erro quando completion.text é undefined 4ms
+         × lança erro quando completion.text é null 3ms
+         × não devolve sucesso com a mensagem de fallback 3ms
+         ✓ aceita resposta com 1 caractere (limite mínimo válido do texto) 1ms
+         ✓ propaga o mesmo erro lançado pelo Pinecone 1ms
+         ✓ não chama o Gemini quando o Pinecone falha 1ms
+         ✓ registra o erro em log antes de propagá-lo 1ms
+         ✓ propaga falha ao obter o índice do Pinecone e não chama o Gemini 1ms
+         ✓ usa metadata.text quando existe 1ms
+         ✓ prefere metadata.text quando text e content existem 1ms
+         ✓ usa metadata.content quando text não existe 1ms
+         ✓ usa metadata.content quando text é string vazia (limite: vazio é falsy) 1ms
+         ✓ devolve string vazia com metadata sem text nem content 1ms
+         ✓ devolve string vazia com metadata vazio 1ms
+         ✓ devolve string vazia com metadata undefined 0ms
+         ✓ devolve string vazia com text e content vazios 1ms
+ ❯ tests/v1-llm/query-rag.dto.spec.ts (25 tests | 5 failed) 46ms
+       ✓ aceita texto simples 7ms
+       ✓ aceita texto com acentos e símbolos 0ms
+       ✓ aceita texto muito longo (5000 caracteres) 0ms
+       ✓ aceita texto com espaços nas bordas e conteúdo no meio 0ms
+       ✓ aceita pergunta com exatamente 1 caractere (limite inferior válido) 0ms
+       ✓ preserva o texto da pergunta após a validação 0ms
+       ✓ recusa string vazia (limite: length = 0, imediatamente abaixo do mínimo) 2ms
+       ✓ recusa pergunta ausente: corpo sem o campo question ({}) 1ms
+       ✓ recusa pergunta ausente: question undefined 1ms
+       ✓ recusa pergunta ausente: corpo undefined 1ms
+       ✓ recusa pergunta ausente: corpo null 1ms
+       ✓ recusa pergunta ausente: campo desconhecido no lugar de question 1ms
+       ✓ recusa question com tipo inválido: null 1ms
+       ✓ recusa question com tipo inválido: número 1ms
+       ✓ recusa question com tipo inválido: zero 1ms
+       ✓ recusa question com tipo inválido: booleano true 1ms
+       ✓ recusa question com tipo inválido: booleano false 1ms
+       ✓ recusa question com tipo inválido: array de strings 1ms
+       ✓ recusa question com tipo inválido: objeto 1ms
+       × recusa 1 espaço (limite: menor string não vazia só com whitespace) 17ms
+       × recusa vários espaços 1ms
+       × recusa tabulação 1ms
+       × recusa quebras de linha 1ms
+       × recusa mistura de whitespace 1ms
+       ✓ aceita pergunta com espaços nas bordas desde que haja conteúdo (fronteira entre CA3 e CA1) 0ms
+ ✓ tests/v1-llm/rag.controller.spec.ts (4 tests) 19ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/v1-llm/query-rag.dto.spec.ts > US-01 - Consultar o chatbot (QueryRagDto) > CA3 - pergunta só com espaços é recusada com 400 > recusa 1 espaço (limite: menor string não vazia só com whitespace)
+ FAIL  tests/v1-llm/query-rag.dto.spec.ts > US-01 - Consultar o chatbot (QueryRagDto) > CA3 - pergunta só com espaços é recusada com 400 > recusa vários espaços
+ FAIL  tests/v1-llm/query-rag.dto.spec.ts > US-01 - Consultar o chatbot (QueryRagDto) > CA3 - pergunta só com espaços é recusada com 400 > recusa tabulação
+ FAIL  tests/v1-llm/query-rag.dto.spec.ts > US-01 - Consultar o chatbot (QueryRagDto) > CA3 - pergunta só com espaços é recusada com 400 > recusa quebras de linha
+ FAIL  tests/v1-llm/query-rag.dto.spec.ts > US-01 - Consultar o chatbot (QueryRagDto) > CA3 - pergunta só com espaços é recusada com 400 > recusa mistura de whitespace
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ tests/v1-llm/query-rag.dto.spec.ts:100:62
+     98|       // Critério: US-01 CA3
+     99|       // OBS: com o schema atual (z.string().min(1)) este teste FALHA,…
+    100|       expect(QueryRagSchema.safeParse({ question }).success).toBe(fals…
+       |                                                              ^
+    101|       expect(await validationStatus({ question })).toBe(400);
+    102|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  tests/v1-llm/rag.service.spec.ts > RagService > US-03 - Responder com base nas fontes > CA3 - Gemini devolve texto vazio: lança erro em vez de fallback > lança erro quando completion.text é string vazia
+ FAIL  tests/v1-llm/rag.service.spec.ts > RagService > US-03 - Responder com base nas fontes > CA3 - Gemini devolve texto vazio: lança erro em vez de fallback > lança erro quando completion.text é undefined
+ FAIL  tests/v1-llm/rag.service.spec.ts > RagService > US-03 - Responder com base nas fontes > CA3 - Gemini devolve texto vazio: lança erro em vez de fallback > lança erro quando completion.text é null
+AssertionError: promise resolved "{ …(2) }" instead of rejecting
+
+- Expected
++ Received
+
+- Error {
+-   "message": "rejected promise",
++ {
++   "answer": "Não foi possível gerar uma resposta.",
++   "sources": [
++     {
++       "content": "conteúdo 1",
++       "id": "1",
++       "score": 0.9,
++       "title": undefined,
++     },
++   ],
+  }
+
+ ❯ tests/v1-llm/rag.service.spec.ts:353:53
+    351|         const { service } = makeService();
+    352|
+    353|         await expect(service.handleQuery('pergunta')).rejects.toThrow(…
+       |                                                     ^
+    354|       });
+    355|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  tests/v1-llm/rag.service.spec.ts > RagService > US-03 - Responder com base nas fontes > CA3 - Gemini devolve texto vazio: lança erro em vez de fallback > não devolve sucesso com a mensagem de fallback
+AssertionError: expected { …(2) } to be an instance of Error
+ ❯ tests/v1-llm/rag.service.spec.ts:365:25
+    363|         const outcome = await service.handleQuery('pergunta').catch((e…
+    364|
+    365|         expect(outcome).toBeInstanceOf(Error);
+       |                         ^
+    366|       });
+    367|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+
+ Test Files  2 failed | 1 passed (3)
+      Tests  9 failed | 64 passed (73)
+   Start at  13:02:53
+   Duration  4.81s (transform 502ms, setup 0ms, import 8.40s, tests 155ms, environment 1ms)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   92.45 |    82.75 |     100 |   92.15 |                   
+ rag               |    92.3 |    82.75 |     100 |      92 |                   
+  rag.constants.ts |     100 |      100 |     100 |     100 |                   
+  ...controller.ts |     100 |      100 |     100 |     100 |                   
+  rag.module.ts    |       0 |      100 |     100 |       0 | 5-10              
+  rag.service.ts   |   95.34 |    82.75 |     100 |   95.12 | 30-31             
+ rag/dto           |     100 |      100 |     100 |     100 |                   
+  query-rag.dto.ts |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
