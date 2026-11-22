@@ -130,14 +130,24 @@ export class RagService {
     const context = searchResult.documents.map((doc) => doc.content).join(CONTEXT_SEPARATOR);
     const prompt = `Responda à pergunta do utilizador com base apenas no contexto fornecido.\n\nContexto:\n${context}\n\nPergunta: ${question}`;
 
-    const completion = await this.ai.models.generateContent({
-      model: GEMINI_MODEL,
-      contents: prompt,
-    });
+    try {
+      const completion = await this.ai.models.generateContent({
+        model: GEMINI_MODEL,
+        contents: prompt,
+      });
 
-    return {
-      answer: completion.text || GENERATION_FALLBACK_RESPONSE,
-      sources: searchResult.documents,
-    };
+      const answer = completion?.text?.trim();
+
+      return {
+        answer: answer || GENERATION_FALLBACK_RESPONSE,
+        sources: searchResult.documents,
+      };
+    } catch (error) {
+      this.logger.error('Erro ao gerar resposta com o Gemini', error);
+      return {
+        answer: GENERATION_FALLBACK_RESPONSE,
+        sources: searchResult.documents,
+      };
+    }
   }
 }

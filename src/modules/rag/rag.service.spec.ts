@@ -4,6 +4,18 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { DEFAULT_NOT_FOUND_RESPONSE } from './rag.constants';
 import { RagService } from './rag.service';
 
+vi.mock('@google/genai', () => {
+  return {
+    GoogleGenAI: class {
+      models = {
+        generateContent: vi.fn().mockResolvedValue({
+          text: 'Conteúdo relevante encontrado com sucesso',
+        }),
+      };
+    },
+  };
+});
+
 vi.mock('openai', () => {
   return {
     default: class {
@@ -37,6 +49,7 @@ describe('RagService', () => {
         if (key === 'PINECONE_API_KEY') return 'test-pinecone-key';
         if (key === 'PINECONE_INDEX_NAME') return 'test-index';
         if (key === 'OPENAI_API_KEY') return 'test-openai-key';
+        if (key === 'GEMINI_API_KEY') return 'test-gemini-key';
         return null;
       }),
     };
